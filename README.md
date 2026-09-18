@@ -3,8 +3,10 @@
 Inseat Fusion is a planned, independent open-source controller for coding
 workflows that run through documented noninteractive CLI interfaces.
 
-> Status: planning only. This repository is not usable yet. It contains no CLI,
-> package, runtime, adapters, or executable examples.
+> Status: early development (Milestone 0 starter). A dry-run CLI exists that
+> validates a task, selects a workflow with a static policy, and renders the exact
+> legs, commands, gates, and budgets it would use. It launches no provider
+> process and modifies no repository. There is no execution engine yet.
 
 The product hypothesis is that a transparent policy can choose among Single,
 Cascade, Critique with one bounded repair, and later Parallel candidate
@@ -45,6 +47,34 @@ compatibility checker rather than a workflow controller.
 The controller would never automatically combine candidate patches through
 unsafe textual merging. It would select one candidate, optionally permit one
 bounded repair, verify it, and apply one final patch.
+
+## Quick start (dry-run only)
+
+Requires Node.js 22 or newer. Claude Code and Codex CLIs are not required for
+Milestone 0 because nothing is executed.
+
+```bash
+git clone https://github.com/inseat-labs/inseat-fusion.git
+cd inseat-fusion
+npm ci
+npm test
+npm run plan:examples
+```
+
+`plan:examples` renders dry-run plans for the synthetic tasks in
+`examples/tasks/`. Add `-- --json` for the `DryRunPlan` document or
+`-- --ledger` for the dry-run ledger. See [examples/README.md](examples/README.md).
+
+## What exists today
+
+| Area | State |
+| --- | --- |
+| Versioned Zod schemas: task, policy, adapter capabilities, invocation plan, result envelope, dry-run plan, ledger | implemented |
+| Static policy engine with a default rule set and recorded decision inputs | implemented |
+| Claude Code and Codex adapters: capability declaration, invocation planning, output parsing to a normalized envelope | implemented against documented shapes, fixture-tested |
+| Dry-run planner for Single, Cascade, and Critique with deterministic gates | implemented |
+| Ledger serialization with key-name secret redaction and `unavailable` usage semantics | implemented |
+| Process supervisor, worktree isolation, verifier, atomic applicator, live execution | not implemented (Milestone 1+) |
 
 ## MVP boundary
 

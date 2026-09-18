@@ -1,19 +1,17 @@
-# Planned Examples
+# Examples
 
-This directory contains no executable examples because Inseat Fusion has no
-runtime or package yet. Future examples should be deterministic fixtures, not
-installation or usage commands.
+`tasks/` holds synthetic task files. Render their dry-run plans with:
 
-Planned scenarios:
+```bash
+npm run plan:examples
+```
 
-- a low-risk documentation task selected for Single
-- a candidate that fails a deterministic gate and escalates through Cascade
-- a read-only critic that produces evidence followed by one bounded repair
-- malformed Claude Code and Codex event streams
-- cancellation before solver completion with an unchanged base
-- a rejected patch containing an unsafe path or symlink transition
-- a later Parallel fixture that selects one candidate without merging patches
+| File | Risk | Bindings | Policy result |
+| --- | --- | --- | --- |
+| `low-risk-single.json` | low | primary only | `single` |
+| `medium-risk-cascade.json` | medium | primary + escalation, 2 verification commands | `cascade` |
+| `high-risk-critique.json` | high | primary + critic, no `maxUsd` | `critique`; cost reported `unavailable` |
 
-Every example must pin an immutable synthetic base, contain no secrets or
-customer data, declare expected policy and events, and state whether cost or
-usage evidence is observed, unavailable, or synthetic.
+Repository paths and revisions are placeholders. Dry-run planning never reads
+the repository, launches a CLI, or writes files. Model identifiers are examples
+for shape only and are not recommendations.

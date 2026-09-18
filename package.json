@@ -1,0 +1,50 @@
+{
+  "name": "@inseat-labs/inseat-fusion",
+  "version": "0.0.0",
+  "description": "Transparent local controller for multi-model coding workflows over Claude Code and Codex CLI. Milestone 0: schemas, static policy, dry-run plans.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "inseat-fusion": "./dist/cli/main.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "tsx src/cli/main.ts",
+    "plan:examples": "tsx src/cli/main.ts plan examples/tasks/*.json",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inseat-labs/inseat-fusion.git"
+  },
+  "homepage": "https://inseat.app",
+  "keywords": [
+    "coding-agents",
+    "claude-code",
+    "codex",
+    "orchestration",
+    "multi-model"
+  ],
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.5",
+    "tsx": "^4.23.13",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.1"
+  }
+}

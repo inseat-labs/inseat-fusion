@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "id": "task-med-001",
+  "title": "Add pagination to list endpoint",
+  "instruction": "Add cursor-based pagination to GET /orders in src/api/orders.ts with tests.",
+  "repository": { "path": "/path/to/repo", "baseRevision": "1111111111111111111111111111111111111111" },
+  "risk": "medium",
+  "touchesPaths": ["src/api/", "tests/api/"],
+  "bindings": {
+    "primary": { "adapter": "codex", "model": "gpt-5-codex" },
+    "escalation": { "adapter": "claude-code", "model": "claude-opus-5" }
+  },
+  "budget": { "maxUsd": 4, "timeoutSeconds": 900 },
+  "verification": [
+    { "name": "typecheck", "command": ["npm", "run", "typecheck"] },
+    { "name": "unit", "command": ["npm", "test"] }
+  ]
+}

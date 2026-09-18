@@ -1,9 +1,24 @@
 # Contributing
 
-Inseat Fusion is in a documentation-only planning phase. Contributions should
-improve product boundaries, architecture, threat analysis, source accuracy, or
-the evaluation design. Runtime code and dependency manifests are out of scope
-until Milestone 0 is approved.
+Inseat Fusion is in early development. A Milestone 0 dry-run planner exists.
+
+## Development
+
+```bash
+npm ci
+npm test            # vitest
+npm run typecheck   # tsc --noEmit
+npm run build       # emits dist/
+npm run dev -- plan examples/tasks/*.json
+```
+
+Milestone 0 code must not spawn processes, read repositories, or write outside
+the test runner. Every schema change needs a test, and every adapter parsing
+change needs a fixture in `fixtures/adapters/`. Cost or usage that the CLI did
+not report must stay `unavailable`.
+
+Contributions that improve product boundaries, architecture, threat analysis,
+source accuracy, or the evaluation design are equally welcome.
 
 ## Before proposing a change
 

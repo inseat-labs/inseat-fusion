@@ -5,6 +5,9 @@ preregistered evaluation in [docs/EVALUATION_PLAN.md](docs/EVALUATION_PLAN.md).
 
 ## Milestone 0: contracts and dry-run planning
 
+Status: starter implemented 2026-09-18. Remaining: progress-event schema and
+fixture-driven cancellation state transitions.
+
 - Freeze task, policy, adapter, event, budget, and ledger schemas.
 - Implement static policy selection and explain every selected workflow leg.
 - Define Claude Code and Codex adapter contract fixtures without live calls.

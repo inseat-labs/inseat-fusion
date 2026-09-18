@@ -1,51 +1,53 @@
 # Implementation Handoff
 
-The repository is planning-only. Do not add runtime code until the milestone
-boundary and threat model are reviewed.
+## Current state
 
-## Exact next implementation order
+Milestone 0 has a working starter. From a clean checkout, `npm ci`, `npm test`,
+`npm run build`, and `npm run plan:examples` pass (Node 24, verified 2026-09-18).
 
-1. Revalidate every external source in RESEARCH.md and COMPETITORS.md, recording
-   review date, current CLI versions, changed URLs, and changed claims.
-2. Audit current Quorum and MassGen revisions and freeze the comparison contract
-   used by EVALUATION_PLAN.md.
-3. Freeze Milestone 0 scope: static policies, dry-run only, adapter contracts,
-   fixtures, progress events, budgets, and ledger schemas. Exclude live process
-   execution, learned routing, Parallel candidates, and repository mutation.
-4. Define versioned task, policy, adapter capability, invocation plan, event,
-   result, verification evidence, budget, and ledger schemas.
-5. Create Claude Code contract fixtures from the currently documented
-   programmatic interface, including success, malformed output, timeout,
-   cancellation, missing usage, and schema drift.
-6. Create Codex contract fixtures from the currently documented noninteractive
-   interface with the same outcome classes.
-7. Implement schema validation and adapter parity tests before adapter logic.
-8. Implement static policy selection for Single, Cascade, and Critique and emit
-   the exact rule and inputs behind every decision.
-9. Implement dry-run planning with user-visible legs, roles, limits, gates,
-   progress states, and provenance. Do not launch child processes.
-10. Implement ledger serialization with secret exclusion and unavailable-value
-    semantics; validate deterministic fixture output.
-11. Add fault fixtures for malformed events, output truncation, budget exhaustion,
-    timeout, and cancellation state transitions.
-12. Run the complete test suite and repository build once a real toolchain exists,
-    and publish the Milestone 0 evidence before considering Milestone 1.
+Implemented:
 
-## Required revalidation before Milestone 1
+- Zod schemas (`src/schemas`): task, policy and decision, adapter capabilities,
+  invocation plan, result envelope, dry-run plan, ledger. All carry `version: 1`.
+- Static policy engine with `DEFAULT_POLICY` (high risk + critic -> critique;
+  medium risk + escalation + verification -> cascade; low risk -> single;
+  fallback single). Every decision records its rule id and inputs.
+- Adapters for Claude Code (`claude -p --output-format json`) and Codex
+  (`codex exec --json`): capability declaration, invocation planning with a
+  read-only mode for critics, and output parsing that classifies `succeeded`,
+  `failed`, `malformed-output`, and `schema-drift`, with usage marked
+  `unavailable` when absent. Fixtures live in `fixtures/adapters/`.
+- Dry-run planner producing legs, budgets, gates, `runsIf` conditions, invariants,
+  and bounded-or-unavailable cost. Text and JSON renderers.
+- Ledger built from a dry-run plan with legs `not-run`; serializer redacts
+  values whose key matches api key, token, secret, password, authorization, or
+  cookie.
+- CLI `inseat-fusion plan`, 33 tests, GitHub Actions CI on Node 22 and 24.
 
-- Re-read Claude Code programmatic, agent teams, and sub-agent documentation.
-- Re-read Codex CLI and noninteractive documentation and inspect the current OSS
-  release behavior.
-- Re-read the GitHub HydraFusion article and community discussion; keep Parallel
-  labeled as this project's later proposal unless GitHub's public claim changes.
-- Re-read the HyDRA preprint and avoid treating a preprint as product validation.
-- Re-audit Quorum, MassGen, Aider architect mode, Cline, OpenHands, and SWE-agent.
-- Freeze immutable source snapshots or citations used by evaluation records.
+Not implemented: progress-event schema, process supervisor, worktree isolation,
+verifier, evidence judge, repair loop, atomic applicator, any live execution.
 
-## Non-negotiable implementation constraints
+## Decisions taken (2026-09-18)
 
-Solvers use isolated worktrees from an immutable base. Critics remain read-only.
-There is no unsafe automatic textual merge. Selection precedes at most one
-bounded repair and complete re-verification. Cancellation leaves the base
-unchanged. Users provide their own credentials; no credential resale or proxy is
-part of the product.
+- Single npm package, ESM, TypeScript 5, Zod 4. No workspace split yet.
+- Adapter output parsing is written against the CLI shapes documented on
+  2026-09-16 and encoded as fixtures. These are contracts to revalidate, not
+  recordings of real sessions.
+- Cost is never estimated from token counts. It is `bounded` by the user's
+  `maxUsd` or `unavailable`.
+- Critic legs use `worktree: none` and a read-only invocation. Solver and repair
+  legs use `isolated-solver`.
+
+## Next agent instructions
+
+1. Add a `ProgressEvent` schema and fixture-driven state-transition tests for
+   cancellation, timeout, and budget exhaustion. This completes Milestone 0.
+2. Revalidate the Claude Code and Codex noninteractive flags and output shapes
+   against current releases. Update `documentationCheckedOn`, the fixtures, and
+   the parsers together.
+3. Only then start Milestone 1: a process supervisor with timeout and
+   cancellation, worktree isolation from an immutable base, and fault-injection
+   tests proving the base is never modified on failure.
+4. Do not add Parallel, learned routing, or any textual merge of candidates.
+5. Run the full test suite and build before handing off and report the exact
+   commands and outcomes.

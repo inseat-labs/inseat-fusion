@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "id": "task-high-001",
+  "title": "Rotate session token signing key",
+  "instruction": "Support dual signing keys during rotation in src/auth/session.ts without invalidating active sessions.",
+  "repository": { "path": "/path/to/repo", "baseRevision": "2222222222222222222222222222222222222222" },
+  "risk": "high",
+  "touchesPaths": ["src/auth/"],
+  "bindings": {
+    "primary": { "adapter": "claude-code", "model": "claude-opus-5" },
+    "critic": { "adapter": "codex", "model": "gpt-5-codex" }
+  },
+  "budget": { "timeoutSeconds": 1200 },
+  "verification": [
+    { "name": "unit", "command": ["npm", "test"] },
+    { "name": "security-lint", "command": ["npm", "run", "lint:security"] }
+  ]
+}

@@ -1,6 +1,19 @@
 # Architecture
 
-This document describes a planned architecture. No component exists yet.
+Milestone 0 components exist under `src/`. Everything marked "planned" below
+has no code yet.
+
+| Module | Component | Status |
+| --- | --- | --- |
+| `src/schemas` | Versioned contracts (task, policy, adapter, plan, ledger) | implemented |
+| `src/policy` | Static policy engine and default rules | implemented |
+| `src/adapters` | Claude Code and Codex adapter contracts | invocation planning and output parsing only |
+| `src/planner` | Dry-run plan builder, renderer, invariants | implemented |
+| `src/ledger` | Ledger construction and redacting serializer | implemented |
+| `src/cli` | `inseat-fusion plan` | implemented |
+| process supervisor, worktree isolation, verifier, evidence judge, bounded repair, atomic applicator | planned | Milestone 1+ |
+
+Toolchain: Node.js 22+, TypeScript 5 (`NodeNext` ESM), Zod 4, Vitest.
 
 ## Invariants
 

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "id": "task-low-001",
+  "title": "Fix typo in CLI help text",
+  "instruction": "Fix the misspelling 'recieve' in src/cli/help.ts and nothing else.",
+  "repository": { "path": "/path/to/repo", "baseRevision": "0000000000000000000000000000000000000000" },
+  "risk": "low",
+  "touchesPaths": ["src/cli/help.ts"],
+  "bindings": {
+    "primary": { "adapter": "codex", "model": "gpt-5-codex" }
+  },
+  "budget": { "maxUsd": 0.5, "timeoutSeconds": 300 },
+  "verification": [{ "name": "typecheck", "command": ["npm", "run", "typecheck"] }]
+}
