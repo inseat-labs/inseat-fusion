@@ -93,6 +93,16 @@ npm run validate:progress
 | Deterministic dry-run simulator for nominal, cancelled, timed-out, and budget-exhausted scenarios | implemented, clearly labeled simulation |
 | Process supervisor, worktree isolation, verifier, atomic applicator, live execution | not implemented (Milestone 1+) |
 
+## Advisory decision providers
+
+No probabilistic decision provider is integrated. See
+[docs/ADR-003-JEV-ADVISORY-ONLY.md](docs/ADR-003-JEV-ADVISORY-ONLY.md): any
+future provider is optional, disabled by default, receives only allowlisted
+redacted state, abstains on low confidence, and can never override a
+deterministic failure. Boundary-lineage integrity is designed in
+[docs/BOUNDARY_LINEAGE.md](docs/BOUNDARY_LINEAGE.md) and scheduled for
+Milestones 1 and 2.
+
 ## MVP boundary
 
 The first implementation milestone is deliberately small:

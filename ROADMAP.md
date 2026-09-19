@@ -20,6 +20,10 @@ no process execution or repository mutation.
 
 ## Milestone 1: isolated Single workflow
 
+Lineage: emit `version: 1` boundary envelopes for `base -> solver -> verify ->
+apply` per [docs/BOUNDARY_LINEAGE.md](docs/BOUNDARY_LINEAGE.md), with digest
+continuity checked before atomic application.
+
 - Add a process supervisor with explicit timeout, budget, and cancellation.
 - Run one solver in a separate worktree created from an immutable base revision.
 - Add deterministic verification and atomic application of one final patch.
@@ -28,6 +32,10 @@ no process execution or repository mutation.
 Exit criterion: fault-injection tests establish atomicity and cleanup behavior.
 
 ## Milestone 2: Cascade and Critique
+
+Lineage: extend envelopes to `critique`, `repair`, and `select`
+transformations; add offline replay verification and the ledger `lineage`
+block.
 
 - Add deterministic Cascade acceptance and escalation gates.
 - Add a read-only critic and one bounded solver repair.
