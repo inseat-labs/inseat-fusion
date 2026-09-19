@@ -9,17 +9,28 @@ const dir = join(import.meta.dirname, "..", "fixtures", "adapters");
 const load = (adapter: string, file: string) => readFile(join(dir, adapter, file), "utf8");
 
 describe("claude-code adapter", () => {
-  it("plans a read-only critic invocation without edit permissions", () => {
+  it("plans a read-only critic invocation that denies prompts and restricts tools", () => {
     const plan = claudeCodeAdapter.planInvocation({ binding: { adapter: "claude-code", model: "m" }, instruction: "review", cwd: "/w", readOnly: true, timeoutSeconds: 10 });
     expect(plan.readOnly).toBe(true);
+    expect(plan.args).toContain("dontAsk");
+    expect(plan.args).toContain("--tools");
     expect(plan.args).toContain("--allowedTools");
     expect(plan.args).not.toContain("acceptEdits");
     expect(plan.credentialSource).toBe("user-cli-login");
   });
 
+  it("passes --max-budget-usd only when a budget is given", () => {
+    const req = { binding: { adapter: "claude-code" as const, model: "m" }, instruction: "x", cwd: "/w", readOnly: false, timeoutSeconds: 10 };
+    expect(claudeCodeAdapter.planInvocation(req).args).not.toContain("--max-budget-usd");
+    const withBudget = claudeCodeAdapter.planInvocation({ ...req, maxUsd: 2.5 }).args;
+    expect(withBudget[withBudget.indexOf("--max-budget-usd") + 1]).toBe("2.5");
+  });
+
   it.each([
     ["success.json", "succeeded", "reported"],
     ["error.json", "failed", "reported"],
+    ["budget-exhausted.json", "budget-exhausted", "reported"],
+    ["permission-denied.json", "succeeded", "reported"],
     ["missing-usage.json", "succeeded", "unavailable"],
     ["malformed.txt", "malformed-output", "unavailable"],
     ["schema-drift.json", "schema-drift", "unavailable"],
@@ -28,6 +39,21 @@ describe("claude-code adapter", () => {
     expect(ResultEnvelopeSchema.parse(env)).toBeTruthy();
     expect(env.outcome).toBe(outcome);
     expect(env.usage.status).toBe(usage);
+  });
+
+  it("extracts session id, terminal reason, model, and marks cost as an estimate", async () => {
+    const env = claudeCodeAdapter.parseOutput(await load("claude-code", "success.json"), 0);
+    expect(env.providerRef).toBe("sess_synthetic_001");
+    expect(env.terminalReason).toBe("completed");
+    expect(env.model).toBe("claude-opus-5");
+    expect(env.usage).toMatchObject({ status: "reported", costUsd: 0.0412, costIsEstimate: true, cachedInputTokens: 1200 });
+  });
+
+  it("surfaces errors[] as the summary and warns about permission denials", async () => {
+    const err = claudeCodeAdapter.parseOutput(await load("claude-code", "error.json"), 1);
+    expect(err.summary).toContain("Reached max turns");
+    const denied = claudeCodeAdapter.parseOutput(await load("claude-code", "permission-denied.json"), 0);
+    expect(denied.warnings.some((w) => w.includes("permission denial"))).toBe(true);
   });
 });
 
@@ -40,6 +66,8 @@ describe("codex adapter", () => {
 
   it.each([
     ["success.jsonl", "succeeded", "reported"],
+    ["turn-failed.jsonl", "failed", "unavailable"],
+    ["thread-error.jsonl", "failed", "unavailable"],
     ["incomplete.jsonl", "failed", "unavailable"],
     ["missing-usage.jsonl", "succeeded", "unavailable"],
     ["malformed.jsonl", "malformed-output", "unavailable"],
@@ -49,6 +77,20 @@ describe("codex adapter", () => {
     expect(ResultEnvelopeSchema.parse(env)).toBeTruthy();
     expect(env.outcome).toBe(outcome);
     expect(env.usage.status).toBe(usage);
+  });
+
+  it("extracts thread id, changed files, and reasoning tokens", async () => {
+    const env = codexAdapter.parseOutput(await load("codex", "success.jsonl"), 0);
+    expect(env.providerRef).toBe("thr_synthetic_001");
+    expect(env.changedFiles).toEqual(["src/paginate.ts", "tests/paginate.test.ts"]);
+    expect(env.usage).toMatchObject({ status: "reported", reasoningOutputTokens: 96, cachedInputTokens: 1500 });
+    expect("costUsd" in env.usage).toBe(false);
+  });
+
+  it("uses the turn.failed message as the summary", async () => {
+    const env = codexAdapter.parseOutput(await load("codex", "turn-failed.jsonl"), 1);
+    expect(env.summary).toContain("rate limit");
+    expect(env.terminalReason).toBe("turn.failed");
   });
 
   it("never invents usage numbers when they are absent", async () => {

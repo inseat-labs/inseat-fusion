@@ -75,6 +75,7 @@ function solverLeg(task: Task, index: number, role: PlannedLeg["role"], binding:
       cwd: `<isolated worktree of ${task.repository.baseRevision}>`,
       readOnly: false,
       timeoutSeconds: budget.timeoutSeconds,
+      ...(budget.maxUsd !== undefined ? { maxUsd: budget.maxUsd } : {}),
     }),
     gatesAfter: [GATE_VERIFY, GATE_SCOPE],
     runsIf,

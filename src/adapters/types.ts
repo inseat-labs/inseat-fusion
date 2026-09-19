@@ -7,6 +7,7 @@ export interface InvocationRequest {
   cwd: string;
   readOnly: boolean;
   timeoutSeconds: number;
+  maxUsd?: number;
 }
 
 export interface Adapter {

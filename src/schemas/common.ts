@@ -37,8 +37,11 @@ export const UsageEvidenceSchema = z.union([
   z.object({
     status: z.literal("reported"),
     inputTokens: z.number().int().nonnegative().optional(),
+    cachedInputTokens: z.number().int().nonnegative().optional(),
     outputTokens: z.number().int().nonnegative().optional(),
+    reasoningOutputTokens: z.number().int().nonnegative().optional(),
     costUsd: z.number().nonnegative().optional(),
+    costIsEstimate: z.boolean().optional(),
     source: z.string().min(1),
   }),
   UnavailableSchema,

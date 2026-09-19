@@ -30,6 +30,7 @@ export const OutcomeSchema = z.enum([
   "failed",
   "timed-out",
   "cancelled",
+  "budget-exhausted",
   "malformed-output",
   "schema-drift",
 ]);
@@ -41,6 +42,8 @@ export const ResultEnvelopeSchema = z.object({
   model: z.string().nullable(),
   outcome: OutcomeSchema,
   exitCode: z.number().int().nullable(),
+  providerRef: z.string().nullable(),
+  terminalReason: z.string().nullable(),
   summary: z.string(),
   changedFiles: z.array(z.string()),
   usage: UsageEvidenceSchema,

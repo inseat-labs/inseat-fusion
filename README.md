@@ -71,7 +71,7 @@ npm run plan:examples
 | --- | --- |
 | Versioned Zod schemas: task, policy, adapter capabilities, invocation plan, result envelope, dry-run plan, ledger | implemented |
 | Static policy engine with a default rule set and recorded decision inputs | implemented |
-| Claude Code and Codex adapters: capability declaration, invocation planning, output parsing to a normalized envelope | implemented against documented shapes, fixture-tested |
+| Claude Code and Codex adapters: capability declaration, invocation planning, output parsing to a normalized envelope | implemented against shapes revalidated 2026-09-19 ([docs/CLI_CONTRACTS.md](docs/CLI_CONTRACTS.md)), fixture-tested |
 | Dry-run planner for Single, Cascade, and Critique with deterministic gates | implemented |
 | Ledger serialization with key-name secret redaction and `unavailable` usage semantics | implemented |
 | Process supervisor, worktree isolation, verifier, atomic applicator, live execution | not implemented (Milestone 1+) |

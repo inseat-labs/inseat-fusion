@@ -7,7 +7,7 @@ has no code yet.
 | --- | --- | --- |
 | `src/schemas` | Versioned contracts (task, policy, adapter, plan, ledger) | implemented |
 | `src/policy` | Static policy engine and default rules | implemented |
-| `src/adapters` | Claude Code and Codex adapter contracts | invocation planning and output parsing only |
+| `src/adapters` | Claude Code and Codex adapter contracts, see [docs/CLI_CONTRACTS.md](docs/CLI_CONTRACTS.md) | invocation planning and output parsing only |
 | `src/planner` | Dry-run plan builder, renderer, invariants | implemented |
 | `src/ledger` | Ledger construction and redacting serializer | implemented |
 | `src/cli` | `inseat-fusion plan` | implemented |
