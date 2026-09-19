@@ -5,6 +5,8 @@ import type { DryRunPlan, PlannedLeg } from "../schemas/plan.js";
 import type { Policy } from "../schemas/policy.js";
 import type { Task } from "../schemas/task.js";
 import { INVARIANTS } from "./invariants.js";
+import { TRANSITIONS } from "../progress/transitions.js";
+import { LegStateSchema, TERMINAL_STATES } from "../schemas/progress.js";
 
 export class PlanError extends Error {
   constructor(message: string) {
@@ -31,6 +33,13 @@ export function buildDryRunPlan(task: Task, policy: Policy): DryRunPlan {
     legs,
     maxRepairs: decision.selected === "critique" ? 1 : 0,
     finalGates: [GATE_VERIFY, GATE_SCOPE, GATE_BASE],
+    progressModel: {
+      kind: "specification",
+      note: "Allowed leg states and transitions. This is the contract a future runtime must emit; it is not telemetry from any execution.",
+      states: [...LegStateSchema.options],
+      terminalStates: [...TERMINAL_STATES],
+      transitions: Object.fromEntries(Object.entries(TRANSITIONS).map(([k, v]) => [k, [...v]])),
+    },
     estimatedCost:
       task.budget.maxUsd !== undefined
         ? { status: "bounded", maxUsd: task.budget.maxUsd }

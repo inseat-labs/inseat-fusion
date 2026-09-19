@@ -6,3 +6,4 @@ export { buildDryRunPlan, PlanError } from "./planner/plan.js";
 export { renderPlan } from "./planner/render.js";
 export { INVARIANTS } from "./planner/invariants.js";
 export { ledgerFromDryRun, serializeLedger } from "./ledger/ledger.js";
+export * from "./progress/index.js";

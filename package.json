@@ -24,7 +24,8 @@
     "test:watch": "vitest",
     "dev": "tsx src/cli/main.ts",
     "plan:examples": "tsx src/cli/main.ts plan examples/tasks/*.json",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "validate:progress": "tsx src/cli/main.ts validate-events fixtures/progress/valid/*.json"
   },
   "repository": {
     "type": "git",

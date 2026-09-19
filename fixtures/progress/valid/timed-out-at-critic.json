@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "workflowId": "dry-run:task-high-001",
+  "origin": "dry-run-simulation",
+  "events": [
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-0",
+      "sequence": 0,
+      "timestamp": "2000-01-01T00:00:00.000Z",
+      "state": "planned",
+      "reason": {
+        "code": "plan-rendered",
+        "message": "leg 0 (solver) planned by default-static-v1"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-1",
+      "sequence": 1,
+      "timestamp": "2000-01-01T00:00:01.000Z",
+      "state": "planned",
+      "reason": {
+        "code": "plan-rendered",
+        "message": "leg 1 (critic) planned by default-static-v1"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-2",
+      "sequence": 2,
+      "timestamp": "2000-01-01T00:00:02.000Z",
+      "state": "planned",
+      "reason": {
+        "code": "plan-rendered",
+        "message": "leg 2 (repair-solver) planned by default-static-v1"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-0",
+      "sequence": 3,
+      "timestamp": "2000-01-01T00:00:03.000Z",
+      "state": "ready",
+      "reason": {
+        "code": "gates-satisfied",
+        "message": "runs if: always"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-0",
+      "sequence": 4,
+      "timestamp": "2000-01-01T00:00:04.000Z",
+      "state": "running",
+      "reason": {
+        "code": "simulated-start",
+        "message": "simulated claude invocation; no process launched"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-0",
+      "sequence": 5,
+      "timestamp": "2000-01-01T00:00:05.000Z",
+      "state": "succeeded",
+      "reason": {
+        "code": "simulated-success",
+        "message": "simulated completion; gates verify, patch-scope assumed satisfied"
+      },
+      "origin": "dry-run-simulation",
+      "evidenceRef": "plan:task-high-001:leg-0"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-1",
+      "sequence": 6,
+      "timestamp": "2000-01-01T00:00:06.000Z",
+      "state": "ready",
+      "reason": {
+        "code": "gates-satisfied",
+        "message": "runs if: leg 0 passes gate verify"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-1",
+      "sequence": 7,
+      "timestamp": "2000-01-01T00:00:07.000Z",
+      "state": "running",
+      "reason": {
+        "code": "simulated-start",
+        "message": "simulated codex invocation; no process launched"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-1",
+      "sequence": 8,
+      "timestamp": "2000-01-01T00:00:08.000Z",
+      "state": "timed-out",
+      "reason": {
+        "code": "deadline-exceeded",
+        "message": "simulated timeout after 1200s; base worktree unchanged"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-high-001",
+      "legId": "leg-2",
+      "sequence": 9,
+      "timestamp": "2000-01-01T00:00:09.000Z",
+      "state": "cancelled",
+      "reason": {
+        "code": "upstream-terminated",
+        "message": "leg 2 never started because an earlier leg ended the workflow"
+      },
+      "origin": "dry-run-simulation"
+    }
+  ]
+}

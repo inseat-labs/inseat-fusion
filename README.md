@@ -65,6 +65,21 @@ npm run plan:examples
 `examples/tasks/`. Add `-- --json` for the `DryRunPlan` document or
 `-- --ledger` for the dry-run ledger. See [examples/README.md](examples/README.md).
 
+Two more commands exercise the progress-event contract without running anything:
+
+```bash
+npm run dev -- simulate examples/tasks/high-risk-critique.json --scenario timed-out --at 1
+npm run validate:progress
+```
+
+## Three kinds of behavior, kept distinct
+
+| Kind | What it means | Where |
+| --- | --- | --- |
+| Implemented Milestone 0 behavior | Deterministic code with tests: schemas, policy selection, invocation planning, output parsing, dry-run plans, ledger, progress-stream validation | `src/` |
+| Dry-run simulation | Synthetic `ProgressStream`s with `origin: "dry-run-simulation"`, fixed timestamps from 2000-01-01, produced by `simulate`. They exercise the state machine. They are not telemetry and say nothing about how a real run would behave | `fixtures/progress/valid/` |
+| Planned live execution | Process supervisor, worktree isolation, verifier, judge, repair, atomic apply. A future runtime must emit `origin: "runtime"` events that pass the same validator | Milestone 1+, no code |
+
 ## What exists today
 
 | Area | State |
@@ -74,6 +89,8 @@ npm run plan:examples
 | Claude Code and Codex adapters: capability declaration, invocation planning, output parsing to a normalized envelope | implemented against shapes revalidated 2026-09-19 ([docs/CLI_CONTRACTS.md](docs/CLI_CONTRACTS.md)), fixture-tested |
 | Dry-run planner for Single, Cascade, and Critique with deterministic gates | implemented |
 | Ledger serialization with key-name secret redaction and `unavailable` usage semantics | implemented |
+| Versioned `ProgressEvent` / `ProgressStream` schema, transition table, stream validator (contiguous sequence, monotonic timestamps, legal transitions, no events after terminal) | implemented |
+| Deterministic dry-run simulator for nominal, cancelled, timed-out, and budget-exhausted scenarios | implemented, clearly labeled simulation |
 | Process supervisor, worktree isolation, verifier, atomic applicator, live execution | not implemented (Milestone 1+) |
 
 ## MVP boundary
@@ -82,9 +99,9 @@ The first implementation milestone is deliberately small:
 
 - static workflow policies and dry-run planning
 - Claude Code and Codex adapter contracts with fixtures
-- explicit budgets, timeouts, cancellation, and progress events
+- explicit budgets, timeouts, cancellation, and progress events (done)
 - planned verification and provenance event schemas
-- malformed-output, cancellation, and schema-drift fixtures
+- malformed-output, cancellation, and schema-drift fixtures (done)
 - no process execution or repository mutation
 - no learned router and no Parallel execution in the initial MVP
 

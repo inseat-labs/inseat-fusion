@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "workflowId": "dry-run:task-low-001",
+  "origin": "dry-run-simulation",
+  "events": [
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-low-001",
+      "legId": "leg-0",
+      "sequence": 0,
+      "timestamp": "2000-01-01T00:00:00.000Z",
+      "state": "planned",
+      "reason": {
+        "code": "plan-rendered",
+        "message": "leg 0 (solver) planned by default-static-v1"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-low-001",
+      "legId": "leg-0",
+      "sequence": 1,
+      "timestamp": "2000-01-01T00:00:01.000Z",
+      "state": "ready",
+      "reason": {
+        "code": "gates-satisfied",
+        "message": "runs if: always"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-low-001",
+      "legId": "leg-0",
+      "sequence": 2,
+      "timestamp": "2000-01-01T00:00:02.000Z",
+      "state": "running",
+      "reason": {
+        "code": "simulated-start",
+        "message": "simulated codex invocation; no process launched"
+      },
+      "origin": "dry-run-simulation"
+    },
+    {
+      "version": 1,
+      "workflowId": "dry-run:task-low-001",
+      "legId": "leg-0",
+      "sequence": 3,
+      "timestamp": "2000-01-01T00:00:03.000Z",
+      "state": "budget-exhausted",
+      "reason": {
+        "code": "max-usd-reached",
+        "message": "simulated spend reached maxUsd 0.5"
+      },
+      "origin": "dry-run-simulation"
+    }
+  ]
+}

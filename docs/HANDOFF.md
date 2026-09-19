@@ -2,52 +2,53 @@
 
 ## Current state
 
-Milestone 0 has a working starter. From a clean checkout, `npm ci`, `npm test`,
-`npm run build`, and `npm run plan:examples` pass (Node 24, verified 2026-09-18).
+Milestone 0 is complete as of 2026-09-19. From a clean checkout, `npm ci`,
+`npm test` (61 tests), `npm run build`, `npm run plan:examples`, and
+`npm run validate:progress` pass on Node 24.
 
 Implemented:
 
 - Zod schemas (`src/schemas`): task, policy and decision, adapter capabilities,
-  invocation plan, result envelope, dry-run plan, ledger. All carry `version: 1`.
-- Static policy engine with `DEFAULT_POLICY` (high risk + critic -> critique;
-  medium risk + escalation + verification -> cascade; low risk -> single;
-  fallback single). Every decision records its rule id and inputs.
-- Adapters for Claude Code (`claude -p --output-format json`) and Codex
-  (`codex exec --json`): capability declaration, invocation planning with a
-  read-only mode for critics, and output parsing that classifies `succeeded`,
-  `failed`, `malformed-output`, and `schema-drift`, with usage marked
-  `unavailable` when absent. Fixtures live in `fixtures/adapters/`.
-- Dry-run planner producing legs, budgets, gates, `runsIf` conditions, invariants,
-  and bounded-or-unavailable cost. Text and JSON renderers.
-- Ledger built from a dry-run plan with legs `not-run`; serializer redacts
-  values whose key matches api key, token, secret, password, authorization, or
-  cookie.
-- CLI `inseat-fusion plan`, 33 tests, GitHub Actions CI on Node 22 and 24.
+  invocation plan, result envelope (now with `providerRef`, `terminalReason`,
+  and a `budget-exhausted` outcome), dry-run plan (with `progressModel`
+  specification), ledger, progress event and stream. All carry `version: 1`.
+- Static policy engine with `DEFAULT_POLICY`; every decision records rule id and
+  inputs.
+- Adapters for Claude Code and Codex revalidated against official docs and
+  local CLIs on 2026-09-19 (`docs/CLI_CONTRACTS.md`). Critic legs use
+  `--permission-mode dontAsk` with a Read/Grep/Glob tool allowlist, or
+  `--sandbox read-only`. `--max-budget-usd` is passed when `maxUsd` is set.
+- Dry-run planner and renderers.
+- Ledger with key-name redaction and `unavailable` usage semantics.
+- Progress: `TRANSITIONS` table, `validateProgressStream`, `simulateProgress`
+  for nominal / cancelled / timed-out / budget-exhausted at any leg; 4 valid and
+  9 invalid fixtures; CLI `simulate` and `validate-events`.
 
-Not implemented: progress-event schema, process supervisor, worktree isolation,
-verifier, evidence judge, repair loop, atomic applicator, any live execution.
+Not implemented: anything that runs. No child processes, no worktrees, no
+repository reads or writes, no verifier, no judge, no repair, no atomic apply.
 
-## Decisions taken (2026-09-18)
+## Decisions taken
 
-- Single npm package, ESM, TypeScript 5, Zod 4. No workspace split yet.
-- Adapter output parsing is written against the CLI shapes documented on
-  2026-09-16 and encoded as fixtures. These are contracts to revalidate, not
-  recordings of real sessions.
-- Cost is never estimated from token counts. It is `bounded` by the user's
-  `maxUsd` or `unavailable`.
-- Critic legs use `worktree: none` and a read-only invocation. Solver and repair
-  legs use `isolated-solver`.
+- Sequence numbers must be contiguous from 0. Gaps are rejected. A runtime that
+  drops events must therefore fail validation rather than pass silently.
+- `planned -> running` is illegal; `ready` is mandatory so gate evaluation is an
+  observable step.
+- Simulated streams are always `origin: "dry-run-simulation"` and use fixed
+  timestamps from 2000-01-01. The dry-run plan and ledger never embed simulated
+  events; the plan embeds only the state table as `progressModel`.
+- Claude Code `--bare` is not used because it bypasses subscription login.
+- Codex exit codes are treated as non-zero-on-failure but are undocumented.
 
 ## Next agent instructions
 
-1. Add a `ProgressEvent` schema and fixture-driven state-transition tests for
-   cancellation, timeout, and budget exhaustion. This completes Milestone 0.
-2. Revalidate the Claude Code and Codex noninteractive flags and output shapes
-   against current releases. Update `documentationCheckedOn`, the fixtures, and
-   the parsers together.
-3. Only then start Milestone 1: a process supervisor with timeout and
-   cancellation, worktree isolation from an immutable base, and fault-injection
-   tests proving the base is never modified on failure.
-4. Do not add Parallel, learned routing, or any textual merge of candidates.
-5. Run the full test suite and build before handing off and report the exact
-   commands and outcomes.
+1. Read `docs/BOUNDARY_LINEAGE.md` (design only) and `docs/ADR-003-JEV-ADVISORY-ONLY.md`
+   before Milestone 1 so the runtime emits what those documents require.
+2. Milestone 1: process supervisor with timeout and cancellation that emits
+   `origin: "runtime"` events passing `validateProgressStream`; worktree
+   isolation from an immutable base; fault-injection tests proving the base is
+   never modified on failure.
+3. Inspect isolated worktrees for `.claude/settings.json` hooks and `.mcp.json`
+   before launching `claude -p`, since `-p` runs them without a trust prompt.
+4. Do not add Parallel, learned routing, textual merge, or any Jev SDK.
+5. Run the full suite and build before handing off and report exact commands
+   and outcomes.

@@ -22,3 +22,5 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: node dist/cli/main.js plan examples/tasks/*.json
+      - run: node dist/cli/main.js validate-events fixtures/progress/valid/*.json
+      - run: node dist/cli/main.js simulate examples/tasks/high-risk-critique.json --scenario timed-out --at 1 > /dev/null

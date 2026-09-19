@@ -10,6 +10,7 @@ has no code yet.
 | `src/adapters` | Claude Code and Codex adapter contracts, see [docs/CLI_CONTRACTS.md](docs/CLI_CONTRACTS.md) | invocation planning and output parsing only |
 | `src/planner` | Dry-run plan builder, renderer, invariants | implemented |
 | `src/ledger` | Ledger construction and redacting serializer | implemented |
+| `src/progress` | Leg state machine (`TRANSITIONS`), stream validator, dry-run simulator | implemented |
 | `src/cli` | `inseat-fusion plan` | implemented |
 | process supervisor, worktree isolation, verifier, evidence judge, bounded repair, atomic applicator | planned | Milestone 1+ |
 
@@ -26,6 +27,20 @@ Toolchain: Node.js 22+, TypeScript 5 (`NodeNext` ESM), Zod 4, Vitest.
 5. At most one policy-bounded repair precedes final verification.
 6. Only the atomic applicator can mutate the base, and only after all gates pass.
 7. Every leg has explicit budgets, timeouts, provenance, and an observable state.
+
+## Progress events
+
+Each leg moves through `planned -> ready -> running -> <terminal>`, where terminal
+is one of `succeeded`, `failed`, `timed-out`, `cancelled`, `budget-exhausted`,
+`malformed-output`, `schema-drift`. `planned` and `ready` may also go straight to
+`cancelled`. Nothing follows a terminal state. A `ProgressStream` is valid only
+when sequence numbers are contiguous from 0, timestamps never regress, every
+leg's first event is `planned`, every transition is in the table, and every
+event shares the stream's `workflowId` and `origin`.
+
+`origin` is either `dry-run-simulation` or `runtime`. Only the former exists
+today. The dry-run plan embeds the state table under `progressModel` as a
+specification for a future runtime; it never contains simulated events.
 
 ## Planned components
 
